@@ -9,7 +9,7 @@ import lombok.*;
 @Table(name = "passagers")
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @PrimaryKeyJoinColumn(name = "id")
 public class Passager extends Utilisateur{
 

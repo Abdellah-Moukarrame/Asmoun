@@ -12,7 +12,7 @@ import lombok.*;
 @Getter
 @Setter
 @PrimaryKeyJoinColumn(name = "id")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class Conducteur extends Utilisateur {
     @Column(nullable = false, unique = true)
     private String numeropermis ;
