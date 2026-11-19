@@ -16,7 +16,7 @@ public interface VehiculeMapper {
     @Mapping(target = "conducteur" , ignore = true)
     Vehicule toEntityu(VehiculeCreateRequest request);
 
-    @Mapping(target = "id", ignore = true)
+
     @Mapping(target = "id" , ignore = true)
     void updateEntity(VehiculeUpdateRequest request, @MappingTarget Vehicule vehicule);
 
