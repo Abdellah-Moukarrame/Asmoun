@@ -11,9 +11,11 @@ public interface TrajetMapper {
     @Mapping(target = "id",ignore=true)
     @Mapping(target="vehicule",ignore = true)
     @Mapping(target = "statut",ignore = true)
+    @Mapping(target = "pointArret", source = "pointsArret")
     Trajet toEntity (TrajetCreateRequest request);
     @Mapping(target = "vehiculeId", source = "vehicule.id")
     @Mapping(target = "conducteurId",source = "vehicule.conducteur.id")
+    @Mapping(target = "pointsArret", source = "pointArret")
     TrajetResponse toResponse(Trajet trajet);
     
 }
