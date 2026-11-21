@@ -2,7 +2,7 @@ package org.example.asmoun.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.example.asmoun.enums.StatutReservation;
+import org.example.asmoun.enums.StatutTrajet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +16,12 @@ public class Trajet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id ;
-    @Column(nullable = false)
+    @Column(name = "nombre_places", nullable = false)
     private Integer nombrePlaces;
+
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private StatutReservation statut = StatutReservation.PUBLIE ;
+    @Column(name = "statut", nullable = false)
+    private StatutTrajet statut = StatutTrajet.PUBLIE;
     @ManyToOne(fetch = FetchType.LAZY , optional = false)
     @JoinColumn(name = "vehicule_id", nullable = false)
     private Vehicule vehicule;
