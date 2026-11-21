@@ -1,8 +1,6 @@
 package org.example.asmoun.enums;
 
 public enum StatutReservation {
-    PUBLIE,
-    COMPLET,
-    TERMINE,
-    ANNULE
+    CONFIRMEE,
+    ANNULEE
 }
