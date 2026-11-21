@@ -23,8 +23,8 @@ public interface TrajetRepository extends JpaRepository<Trajet,Long> {
             join t.pointArret depart  
             join t.pointArret arrivee
             where depart.ordre<arrivee.ordre
-            and(:villDeDepart is null or lower(depart.ville)=lower(:villDeDepart)
-            and(:villeDarrive is null or lower(arrivee.ville)=lower(:villeDarrive)
+            and(:villDeDepart is null or lower(depart.ville)=lower(:villDeDepart))
+            and(:villeDarrive is null or lower(arrivee.ville)=lower(:villeDarrive))
             and(:dateDepart is null or depart.heurePassage>= :dateDepart)
             and(:prixMax is null or (arrivee.prixDepuisDepart - depart.prixDepuisDepart)<= :prixMax)
                        """
