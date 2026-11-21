@@ -1,14 +1,15 @@
 package org.example.asmoun.dto.response;
 
 import org.example.asmoun.enums.StatutReservation;
-import org.w3c.dom.stylesheets.LinkStyle;
+import org.example.asmoun.enums.StatutTrajet;
+
 
 import java.util.List;
 
 public record TrajetResponse(
         Long id,
         Integer nombrePlaces,
-        StatutReservation statut,
+        StatutTrajet statut,
         Long vehiculeId ,
         Long conducteurId,
         List<PointArretResponse> pointsArret) {
