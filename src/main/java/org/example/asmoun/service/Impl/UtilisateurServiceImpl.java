@@ -5,6 +5,10 @@ import org.example.asmoun.entity.Conducteur;
 import org.example.asmoun.entity.Passager;
 import org.example.asmoun.entity.Utilisateur;
 import org.example.asmoun.enums.Role;
+import org.example.asmoun.exception.InvalidValueException;
+import org.example.asmoun.exception.RequiredArgumentException;
+import org.example.asmoun.exception.ResourceAlreadyExistException;
+import org.example.asmoun.exception.ResourceNotFoundException;
 import org.example.asmoun.mapper.UtilisateurMapper;
 import org.example.asmoun.repository.UtilisateurRepository;
 import org.example.asmoun.service.UtilisateurService;
@@ -32,25 +36,36 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     @Override
     @Transactional
     public UtilisateurResponse register(UtilisateurRegisterRequest request, Role role) {
-        if (role != Role.CONDUCTEUR && role !=Role.PASSAGER) {
-            throw new IllegalArgumentException("this role hasn't the permission to register");
+        if (role != Role.CONDUCTEUR && role != Role.PASSAGER) {
+            throw new InvalidValueException(
+                    "this role hasn't the permission to register"
+            );
         }
-        if(utilisateurRepository.existsByEmail(request.email())){
-            throw new IllegalStateException("this email already exist");
+
+        if (utilisateurRepository.existsByEmail(request.email())) {
+            throw new ResourceAlreadyExistException(
+                    "this email already exist"
+            );
         }
-        Utilisateur utilisateur ;
-        if(role == Role.CONDUCTEUR ){
-            String permis = request.numeroPermis() ;
-            if (permis.isBlank() || permis == null){
-                throw new IllegalArgumentException("the liscence is required");
+
+        Utilisateur utilisateur;
+
+        if (role == Role.CONDUCTEUR) {
+            String permis = request.numeroPermis();
+
+            if (permis == null || permis.isBlank()) {
+                throw new RequiredArgumentException(
+                        "the licence is required"
+                );
             }
+
             Conducteur conducteur = new Conducteur();
             conducteur.setNumeropermis(permis);
-            utilisateur = conducteur ;
-
-        }else{
+            utilisateur = conducteur;
+        } else {
             utilisateur = new Passager();
         }
+
         utilisateur.setNom(request.nom());
         utilisateur.setPrenom(request.prenom());
         utilisateur.setEmail(request.email());
@@ -64,10 +79,12 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     @Override
     public UtilisateurResponse getUtilisateurById(Long id) {
-       Utilisateur utilisateur = utilisateurRepository.findById(id).orElseThrow(()->
-               new IllegalArgumentException("no user found with this id try with a correct one :)")
-       );
-       return utilisateurMapper.toResponse(utilisateur);
+        Utilisateur utilisateur = utilisateurRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "no user found with this id try with a correct one :)"
+                ));
+
+        return utilisateurMapper.toResponse(utilisateur);
     }
 
     @Override

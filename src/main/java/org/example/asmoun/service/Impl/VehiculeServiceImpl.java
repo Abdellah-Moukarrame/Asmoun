@@ -7,6 +7,8 @@ import org.example.asmoun.dto.response.VehiculeResponse;
 import org.example.asmoun.entity.Conducteur;
 import org.example.asmoun.entity.Utilisateur;
 import org.example.asmoun.entity.Vehicule;
+import org.example.asmoun.exception.InvalidValueException;
+import org.example.asmoun.exception.ResourceNotFoundException;
 import org.example.asmoun.mapper.VehiculeMapper;
 import org.example.asmoun.repository.UtilisateurRepository;
 import org.example.asmoun.repository.VehiculeRepository;
@@ -19,13 +21,18 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class VehiculeServiceImpl implements VehiculeService {
-    private final VehiculeRepository vehiculeRepository ;
-    private final UtilisateurRepository utilisateurRepository ;
-    private final VehiculeMapper vehiculeMapper ;
+
+    private final VehiculeRepository vehiculeRepository;
+    private final UtilisateurRepository utilisateurRepository;
+    private final VehiculeMapper vehiculeMapper;
+
     @Override
     @Transactional
-    public VehiculeResponse createVehicule(Long conducteurId, VehiculeCreateRequest request) {
-        Conducteur conducteur = getConducteur(conducteurId) ;
+    public VehiculeResponse createVehicule(
+            Long conducteurId,
+            VehiculeCreateRequest request
+    ) {
+        Conducteur conducteur = getConducteur(conducteurId);
         Vehicule vehicule = vehiculeMapper.toEntityu(request);
         vehicule.setConducteur(conducteur);
 
@@ -35,7 +42,11 @@ public class VehiculeServiceImpl implements VehiculeService {
 
     @Override
     public VehiculeResponse getVehiculeById(Long id) {
-        Vehicule vehicule = vehiculeRepository.findById(id).orElseThrow(()->new IllegalArgumentException("no user found"));
+        Vehicule vehicule = vehiculeRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("no user found")
+                );
+
         return vehiculeMapper.toResonse(vehicule);
     }
 
@@ -46,11 +57,23 @@ public class VehiculeServiceImpl implements VehiculeService {
 
     @Override
     @Transactional
-    public VehiculeResponse updateVehicule(Long id, Long conducteurId, VehiculeUpdateRequest request) {
-
+    public VehiculeResponse updateVehicule(
+            Long id,
+            Long conducteurId,
+            VehiculeUpdateRequest request
+    ) {
         getConducteur(conducteurId);
-        Vehicule vehicule = vehiculeRepository.findByIdAndConducteurId(id,conducteurId).orElseThrow(()->new IllegalArgumentException("no vehicule found with this driver id"));
-        vehiculeMapper.updateEntity(request,vehicule);
+
+        Vehicule vehicule = vehiculeRepository
+                .findByIdAndConducteurId(id, conducteurId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "no vehicule found with this driver id"
+                        )
+                );
+
+        vehiculeMapper.updateEntity(request, vehicule);
+
         Vehicule saved = vehiculeRepository.save(vehicule);
         return vehiculeMapper.toResonse(saved);
     }
@@ -60,11 +83,18 @@ public class VehiculeServiceImpl implements VehiculeService {
 
     }
 
-    private Conducteur getConducteur(Long conducteurId ){
-        Utilisateur utilisateur = utilisateurRepository.findById(conducteurId).orElseThrow(()->new IllegalArgumentException("no user found"));
+    private Conducteur getConducteur(Long conducteurId) {
+        Utilisateur utilisateur = utilisateurRepository.findById(conducteurId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("no user found")
+                );
+
         if (!(utilisateur instanceof Conducteur conducteur)) {
-            throw new IllegalArgumentException("u can do this u are not a driver");
+            throw new InvalidValueException(
+                    "u can do this u are not a driver"
+            );
         }
-        return conducteur ;
+
+        return conducteur;
     }
 }
